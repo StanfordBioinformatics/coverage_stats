@@ -1,10 +1,5 @@
-vizzle
-======
-
-A collection of tools to create plots and figures. Initially targeting QC metrics, but can be expanded to other types of data.
-
-coverage
-========
+coverage_stats
+==============
 COMPUTING THE COVERAGE STATS FOR MIN 10 and MIN 20 with Q0,Q10,Q20,Q30
 
 After you have the coverage data from Kwality:
