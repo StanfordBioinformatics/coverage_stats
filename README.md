@@ -13,7 +13,7 @@ Computes additional coverage statistics downstream of GATK's DepthOfCoverage.
 	optional arguments:
 	  -h, --help        show this help message and exit
 	  -b BASEPATH, --basepath BASEPATH
-                	  path to "cases", "dbases", and "tools" directories
+                	    path to "cases", "dbases", and "tools" directories
                         (default: /srv/gsfs0/SCGS)
   	  -m MEDGAPDIR, --medgapdir MEDGAPDIR
     	                name of MedGap subdirectory, relative to basepath
