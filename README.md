@@ -8,24 +8,24 @@ Computes additional coverage statistics downstream of GATK's DepthOfCoverage.
 	case
 
 	positional arguments:
-	  case                  name of case subdirectory (for example, case0011)
+	  case            name of case subdirectory (for example, case0011)
 
 	optional arguments:
-	  -h, --help            show this help message and exit
-	  -b BASEPATH, --basepath BASEPATH
-                        	path to "cases", "dbases", and "tools" directories
-                        	(default: /srv/gsfs0/SCGS)
+	-h, --help        show this help message and exit
+	-b BASEPATH, --basepath BASEPATH
+                	  path to "cases", "dbases", and "tools" directories
+                          (default: /srv/gsfs0/SCGS)
   	-m MEDGAPDIR, --medgapdir MEDGAPDIR
-    	                    name of MedGap subdirectory, relative to basepath
+    	                  name of MedGap subdirectory, relative to basepath
       	                  (default: latest)
   	-q QCDIR, --qcdir QCDIR
-    	                    name of QC subdirectory, relative to medgapdir
+    	                  name of QC subdirectory, relative to medgapdir
       	                  (default: latest)
   	-d DBASESDIR, --dbasesdir DBASESDIR
-    	                    name of genelists subdirectory, relative to basepath
+    	                  name of genelists subdirectory, relative to basepath
       	                  (default: dbases)
   	-t TOOLSDIR, --toolsdir TOOLSDIR
-    	                    name of tools subdirectory, relative to basepath
+    	                  name of tools subdirectory, relative to basepath
       	                  (default: tools/coverage/dev)
 
 For example:
