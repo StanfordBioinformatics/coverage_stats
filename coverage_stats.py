@@ -12,7 +12,7 @@ genelists = ['dcm','acmg','clinvar','arrhythmia-brugada','global-developmental-d
 
 default_basepath = '/srv/gsfs0/SCGS' 
 default_dbasesdir = 'dbases'
-default_toolsdir = 'tools/coverage/dev'
+default_toolsdir = 'tools/coverage_stats/latest'
 
 parser = argparse.ArgumentParser('Run additional coverage statistics for a single case.', formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 parser.add_argument('-b', '--basepath', dest='basepath', type=str, default=default_basepath, help='path to "cases", "dbases", and "tools" directories')
