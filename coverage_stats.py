@@ -53,7 +53,7 @@ args_dict['collect_stats_script'] = args_dict['basepath'] + '/' + args.toolsdir 
 # Call add_genes_qsub.pl for each quality, which uses qsub to run add_exonname_coverage.pl on each chromosome
 for quality in qualities:
  	args_dict['quality'] = quality
- 	templ = Template('$add_genes_script $case $medgapdir $exons_bedfile refseq_exons $thresholds $quality 2g $coverage_dir')
+ 	templ = Template('$add_genes_script $case $medgapdir $exons_bedfile refseq_exons $thresholds $quality 2g $coverage_dir $toolsdir')
  	command_string = templ.substitute(args_dict)	
  	command = shlex.split(command_string)
  	subprocess.check_call(command)
