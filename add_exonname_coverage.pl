@@ -18,7 +18,7 @@ open (IN, "<", $in) or die "cannot open input sample file!";
 open (OUT, ">", $out) or die "cannot open output file!";
 open (STAT, ">", $stat) or die "cannot open output file!";
 #open (OUT, ">", "test.txt") or die "cannot open output file!";
-open (GENE, "<", $genes) or die "cannot open input gene list!";
+open (GENE, "<", $genes) or die "cannot open input gene list ($genes)!";
 
 my %genes;
 

@@ -9,7 +9,7 @@ import os.path
 current_version = '0.1'
 default_basepath = '/srv/gsfs0/SCGS' 
 default_toolsdir = 'pipeline/coverage_stats/' + current_version
-default_dbasesdir = 'pipeline/dbases'
+default_dbasesdir = 'pipeline/dbases/' + current_version
 
 qualities = ['Q0', 'Q10', 'Q20', 'Q30']
 thresholds = '5 10 15 20' # Perl script takes exactly 4 thresholds
@@ -43,7 +43,7 @@ else:
 
 args_dict['thresholds'] = thresholds
 args_dict['coverage_dir'] = args_dict['basepath'] + '/cases/' + args_dict['case'] + '/' + args_dict['medgapdir'] + '/' + args_dict['qcdir'] + '/coverage'
-args_dict['exons_bedfile'] = args_dict['basepath'] + '/' + args.dbasesdir + '/refSeq/refseq_exons.bed' 
+args_dict['exons_bedfile'] = args_dict['basepath'] + '/' + args.dbasesdir + '/refseq_exons.bed' 
 args_dict['add_genes_script'] = args_dict['basepath'] + '/' + args.toolsdir + '/add_genes_qsub.pl'
 args_dict['compute_gene_stats_script'] = args_dict['basepath'] + '/' + args.toolsdir + '/compute_gene_stats.pl'
 args_dict['grab_genes_stats_script'] = args_dict['basepath'] + '/' + args.toolsdir + '/grab_genes_stats.pl'
@@ -53,7 +53,7 @@ args_dict['collect_stats_script'] = args_dict['basepath'] + '/' + args.toolsdir 
 # Call add_genes_qsub.pl for each quality, which uses qsub to run add_exonname_coverage.pl on each chromosome
 for quality in qualities:
  	args_dict['quality'] = quality
- 	templ = Template('$add_genes_script $case $medgapdir $exons_bedfile refseq_exons $thresholds $quality 2g $coverage_dir $toolsdir')
+ 	templ = Template('$add_genes_script $case $medgapdir $exons_bedfile refseq_exons $thresholds $quality 2g $coverage_dir $basepath/$toolsdir')
  	command_string = templ.substitute(args_dict)	
  	command = shlex.split(command_string)
  	subprocess.check_call(command)
@@ -69,7 +69,7 @@ for quality in qualities:
 
 # Call grab_genes_stats.pl on each gene list, on each quality
 for genelist in genelists:
-	args_dict['genelist_file'] = args_dict['basepath'] + '/' + args.dbasesdir + '/' + genelist + '/' + genelist + '-panel.txt'
+	args_dict['genelist_file'] = args_dict['basepath'] + '/' + args.dbasesdir + '/' + genelist + '-panel.txt'
 	for quality in qualities:
 		args_dict['quality'] = quality
 		args_dict['exon_stats_file'] = args_dict['coverage_dir'] + '/refseq_exon_stats_' + quality + '.txt'
@@ -81,7 +81,7 @@ for genelist in genelists:
  	
 # Call query_stats.pl on each gene list, on each quality
 for genelist in genelists:
-	args_dict['genelist_file'] = args_dict['basepath'] + '/' + args.dbasesdir + '/' + genelist + '/' + genelist + '-panel.txt'
+	args_dict['genelist_file'] = args_dict['basepath'] + '/' + args.dbasesdir + '/' + genelist + '-panel.txt'
 	for quality in qualities:
 		args_dict['quality'] = quality
 		args_dict['infile'] = args_dict['coverage_dir'] + '/' + genelist + '_exon_stats_' + quality + '.txt'
