@@ -1,8 +1,10 @@
 #!/usr/bin/perl
 use strict;
 
+my $indir = shift;
 my $in = shift;
 my $genes = shift;
+my $outdir = shift;
 my $out = shift;
 my $chr = shift;
 my $thr1 = shift;
@@ -14,9 +16,11 @@ my $stat = "$in\_$chr\_$thr1\_$thr2\_$thr3\_$thr4\.stat";
 #my $genes = "/srv/gsfs0/projects/gbsc/Clinical_Service/dbases/ACMG/ACMG_genes.bed";
 #my $out = "/srv/gsfs0/projects/gbsc/benchmark/giab/NA12878.clia/hugeseq-1.3/hc2/manual-QC/coverage/acmg_coverage_hist_genes.txt";
 
-open (IN, "<", $in) or die "cannot open input sample file!";
-open (OUT, ">", $out) or die "cannot open output file!";
-open (STAT, ">", $stat) or die "cannot open output file!";
+open (IN, "<", "$indir/$in") or die "cannot open input sample file!";
+# print "output file: $outdir/$out\n";
+# print "stats file: $outdir/$stat\n";
+open (OUT, ">", "$outdir/$out") or die "cannot open output file!";
+open (STAT, ">", "$outdir/$stat") or die "cannot open output stats file!";
 #open (OUT, ">", "test.txt") or die "cannot open output file!";
 open (GENE, "<", $genes) or die "cannot open input gene list ($genes)!";
 

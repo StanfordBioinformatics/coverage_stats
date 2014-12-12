@@ -7,13 +7,14 @@ import highest_version
 import os.path
 
 current_version = '0.2'
+dbases_version = '0.2'
 default_basepath = '/srv/gsfs0/SCGS' 
 default_toolsdir = 'pipeline/coverage_stats/' + current_version
-default_dbasesdir = 'pipeline/dbases/' + current_version
+default_dbasesdir = 'pipeline/dbases/' + dbases_version
 
 qualities = ['Q0', 'Q10', 'Q20', 'Q30']
 thresholds = '5 10 15 20' # Perl script takes exactly 4 thresholds
-genelists = ['dcm','acmg','clinvar','arrhythmia-brugada','global-developmental-delay']
+genelists = ['dcm','acmg','clinvar','arrhythmia-brugada','global-developmental-delay','jf-cancer']
 
 def add_gene_names(args_dict):
 	"""Call add_genes_qsub.pl for each quality, which uses qsub to run add_exonname_coverage.pl on each chromosome."""
@@ -42,7 +43,8 @@ def grab_gene_stats(args_dict):
 			args_dict['quality'] = quality
 			args_dict['exon_stats_file'] = args_dict['output_dir'] + '/refseq_exon_stats_' + quality + '.txt'
 			args_dict['outfile'] = args_dict['output_dir'] + '/' + genelist + '_exon_stats_' + quality + '.txt'
-			templ = Template('qsub -hold_jid compute_gene_stats_$case* -A clinical-services -N grab_genes_stats_$case\_'+genelist+'\_$quality """\"$grab_genes_stats_script $exon_stats_file $genelist_file $outfile\""""')
+			args_dict['outfile_unmatched'] = args_dict['output_dir'] + '/' + genelist + '_exon_stats_' + quality + '\_unmatched.txt'
+			templ = Template('qsub -hold_jid compute_gene_stats_$case* -A clinical-services -N grab_genes_stats_$case\_'+genelist+'\_$quality """\"$grab_genes_stats_script $exon_stats_file $genelist_file $outfile $outfile_unmatched\""""')
 			command_string = templ.substitute(args_dict)	
 			command = shlex.split(command_string)
 			subprocess.check_call(command)
@@ -71,25 +73,25 @@ def collect_stats(args_dict):
 
 def summarize_stats(args_dict):
 	"""Extract top-level summary stats for clinical report."""
-	infile = open(os.path.join(args_dict['output_dir'],'genome_coverage_hist_Q0.txt.sample_summary'))
+	infile = open(os.path.join(args_dict['coverage_dir'],'genome_coverage_hist_Q0.txt.sample_summary'))
 	infile.readline()
 	fields = infile.readline().split('\t')
 	genome_Q0_mean_depth = fields[2]
 	genome_Q0_coverage = fields[6]
 	print(fields[2] + ', ' + fields[6])
-	infile = open(os.path.join(args_dict['output_dir'],'genome_coverage_hist_Q20.txt.sample_summary'))
+	infile = open(os.path.join(args_dict['coverage_dir'],'genome_coverage_hist_Q20.txt.sample_summary'))
 	infile.readline()
 	fields = infile.readline().split('\t')
 	genome_Q20_mean_depth = fields[2]
 	genome_Q20_coverage = fields[6]
 	print(fields[2] + ', ' + fields[6])
-	infile = open(os.path.join(args_dict['output_dir'],'refseq_exons_coverage_hist_Q0.txt.sample_summary'))
+	infile = open(os.path.join(args_dict['coverage_dir'],'refseq_exons_coverage_hist_Q0.txt.sample_summary'))
 	infile.readline()
 	fields = infile.readline().split('\t')
 	exome_Q0_mean_depth = fields[2]
 	exome_Q0_coverage = fields[6]
 	print(fields[2] + ', ' + fields[6])
-	infile = open(os.path.join(args_dict['output_dir'],'refseq_exons_coverage_hist_Q20.txt.sample_summary'))
+	infile = open(os.path.join(args_dict['coverage_dir'],'refseq_exons_coverage_hist_Q20.txt.sample_summary'))
 	infile.readline()
 	fields = infile.readline().split('\t')
 	exome_Q20_mean_depth = fields[2]
@@ -128,6 +130,7 @@ if __name__ == "__main__":
 		assert cases == 'cases'
 		args_dict['basepath'] = rest
 	else:
+		assert args.case != None
 		if args.medgapdir == 'latest':
 			args_dict['medgapdir'] = os.path.basename(highest_version.highest_version(args_dict['basepath'] + '/cases/' + args_dict['case']+ '/medgap'))
 		if args.qcdir == 'latest':
@@ -141,7 +144,7 @@ if __name__ == "__main__":
 	args_dict['grab_genes_stats_script'] = args_dict['basepath'] + '/' + args.toolsdir + '/grab_genes_stats.pl'
 	args_dict['query_stats_script'] = args_dict['basepath'] + '/' + args.toolsdir + '/query_stats.pl'
 	args_dict['collect_stats_script'] = args_dict['basepath'] + '/' + args.toolsdir + '/collect_stats.pl'
-	args_dict['output_dir'] = os.path.join(args_dict['coverage_dir'],'coverage_stats')
+	args_dict['output_dir'] = os.path.join(args_dict['coverage_dir'],'coverage_stats-'+str(current_version))
 
 	# Create output dir if it's not there already
 	if not os.path.isdir(args_dict['output_dir']):
