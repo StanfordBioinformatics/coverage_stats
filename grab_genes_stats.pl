@@ -9,7 +9,7 @@ my $out_unmatched = shift;
 
 open (GENES, "<", $genes) or die "cannot open genes file!";
 open (OUT, ">", $out) or die "cannot open output file!";
-open (OUT_UNMATCHED, ">", $out_unmatched) or die "cannot open output file!";
+#open (OUT_UNMATCHED, ">", $out_unmatched) or die "cannot open output file!";
 open (IN, "<", $in) or die "cannot open input sample file!";
 #print OUT "Locus\tTotal_Depth\tAverage_Depth_sample\tDepth\tcovered_by10\tcovered_by20\tgene\n";
 
@@ -55,15 +55,15 @@ close OUT;
 # At this point, genes_found should have a value of 0 for genes that were matched and 1 for genes that weren't matched
 my $unmatched_count = 0;
 
-print OUT_UNMATCHED "Genes from gene list with no matches:\n";
-foreach my $gene (keys %genes_found) {
-	if ($genes_found{$gene} eq "1") {
-		print OUT_UNMATCHED "$gene\n";
-		$unmatched_count++;
-	}	
-}
-if ($unmatched_count == 0) {
-	print OUT_UNMATCHED "No unmatched genes.\n";
-}
+#print OUT_UNMATCHED "Genes from gene list with no matches:\n";
+#foreach my $gene (keys %genes_found) {
+#	if ($genes_found{$gene} eq "1") {
+#		print OUT_UNMATCHED "$gene\n";
+#		$unmatched_count++;
+#	}	
+#}
+#if ($unmatched_count == 0) {
+#	print OUT_UNMATCHED "No unmatched genes.\n";
+#}
 
 close OUT_UNMATCHED;
