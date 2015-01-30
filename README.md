@@ -2,31 +2,31 @@ coverage_stats
 ==============
 Computes additional coverage statistics downstream of GATK's DepthOfCoverage.
 
-usage: Run additional coverage statistics for a single case.
-       [-h] [-b BASEPATH] [-m MEDGAPDIR] [-q QCDIR] [-d DBASESDIR]
-       [-t TOOLSDIR] [--case CASE] [--fullqcdir FULLQCDIR]
-
-optional arguments:
-  -h, --help            show this help message and exit
-  -b BASEPATH, --basepath BASEPATH
-                        path to "cases" directory (default: /srv/gsfs0/SCGS)
-  -m MEDGAPDIR, --medgapdir MEDGAPDIR
-                        MedGap subdirectory, relative to basepath (default:
-                        latest)
-  -q QCDIR, --qcdir QCDIR
-                        QC subdirectory, relative to medgapdir (default:
-                        latest)
-  -d DBASESDIR, --dbasesdir DBASESDIR
-                        genelists subdirectory, relative to basepath (default:
-                        pipeline/dbases/0.2)
-  -t TOOLSDIR, --toolsdir TOOLSDIR
-                        tools subdirectory, relative to basepath (default:
-                        pipeline/coverage_stats/0.2)
-  --case CASE           name of case subdirectory (for example, case0017)
-                        (default: None)
-  --fullqcdir FULLQCDIR
-                        Full path to QC directory. If provided, overrides
-                        basepath, medgapdir, qcdir, and case. (default: None)
+    usage: Run additional coverage statistics for a single case.
+           [-h] [-b BASEPATH] [-m MEDGAPDIR] [-q QCDIR] [-d DBASESDIR]
+           [-t TOOLSDIR] [--case CASE] [--fullqcdir FULLQCDIR]
+    
+    optional arguments:
+      -h, --help            show this help message and exit
+      -b BASEPATH, --basepath BASEPATH
+                            path to "cases" directory (default: /srv/gsfs0/SCGS)
+      -m MEDGAPDIR, --medgapdir MEDGAPDIR
+                            MedGap subdirectory, relative to basepath (default:
+                            latest)
+      -q QCDIR, --qcdir QCDIR
+                            QC subdirectory, relative to medgapdir (default:
+                            latest)
+      -d DBASESDIR, --dbasesdir DBASESDIR
+                            genelists subdirectory, relative to basepath (default:
+                            pipeline/dbases/0.2)
+      -t TOOLSDIR, --toolsdir TOOLSDIR
+                            tools subdirectory, relative to basepath (default:
+                            pipeline/coverage_stats/0.2)
+      --case CASE           name of case subdirectory (for example, case0017)
+                            (default: None)
+      --fullqcdir FULLQCDIR
+                            Full path to QC directory. If provided, overrides
+                            basepath, medgapdir, qcdir, and case. (default: None)
 
 For example:
 
