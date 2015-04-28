@@ -6,22 +6,23 @@ import subprocess
 import highest_version
 import os.path
 
-current_version = '0.3.1'
-dbases_version = '0.2'
+current_version = '0.4'
 default_basepath = '/srv/gsfs0/SCGS' 
 default_toolsdir = 'pipeline/coverage_stats/' + current_version
-default_dbasesdir = 'pipeline/dbases/' + dbases_version
-default_qsub = '/srv/gs1/software/oge2011.11p1/bin/linux-x64/qsub'
+default_dbasesdir = default_toolsdir + '/dbases/'
+default_qsub = '/srv/gsfs0/admin_stuff/sge/bin/lx-amd64/qsub'
+#default_qsub = '/srv/gs1/software/oge2011.11p1/bin/linux-x64/qsub'
+default_logsdir = '~/logs'
 
 qualities = ['Q0', 'Q10', 'Q20', 'Q30']
 thresholds = '5 10 15 20' # Perl script takes exactly 4 thresholds
-genelists = ['dcm','acmg','clinvar','arrhythmia-brugada','global-developmental-delay','jf-cancer']
+genelists = ['cardiomyopathy','neuromuscular','acmg','clinvar','arrhythmia-brugada','global-developmental-delay','jf-cancer','hematologic','autonomic','wellcome']
 
 def add_gene_names(args_dict):
     """Call add_genes_qsub.pl for each quality, which uses qsub to run add_exonname_coverage.pl on each chromosome."""
     for quality in qualities:
         args_dict['quality'] = quality
-        templ = Template('$add_genes_script $case $medgapdir $exons_bedfile refseq_exons $thresholds $quality 2g $coverage_dir $basepath/$toolsdir $output_dir')
+        templ = Template('$add_genes_script $case $medgapdir $exons_bedfile refseq_exons $thresholds $quality 2g $coverage_dir $basepath/$toolsdir $output_dir $logsdir')
         command_string = templ.substitute(args_dict)	
         command = shlex.split(command_string)
         subprocess.check_call(command)
@@ -32,7 +33,7 @@ def compute_gene_stats(args_dict):
     for quality in qualities:
         args_dict['quality'] = quality
         args_dict['outfile'] = args_dict['output_dir'] + '/refseq_exon_stats_' + quality + '.txt'
-        templ = Template(qsub + ' -hold_jid coverage_add_refseq_exons_$case* -A clinical-services -N compute_gene_stats_$case\_$quality """\"$compute_gene_stats_script $output_dir $outfile $quality\""""')
+        templ = Template(qsub + ' -hold_jid coverage_add_refseq_exons_$case* -o $logsdir -e $logsdir -A clinical-services -N compute_gene_stats_$case\_$quality """\"$compute_gene_stats_script $output_dir $outfile $quality\""""')
         command_string = templ.substitute(args_dict)	
         command = shlex.split(command_string)
         subprocess.check_call(command)
@@ -47,7 +48,7 @@ def grab_gene_stats(args_dict):
             args_dict['exon_stats_file'] = args_dict['output_dir'] + '/refseq_exon_stats_' + quality + '.txt'
             args_dict['outfile'] = args_dict['output_dir'] + '/' + genelist + '_exon_stats_' + quality + '.txt'
             args_dict['outfile_unmatched'] = args_dict['output_dir'] + '/' + genelist + '_exon_stats_' + quality + '\_unmatched.txt'
-            templ = Template(qsub + ' -hold_jid compute_gene_stats_$case* -A clinical-services -N grab_genes_stats_$case\_'+genelist+'\_$quality """\"$grab_genes_stats_script $exon_stats_file $genelist_file $outfile $outfile_unmatched\""""')
+            templ = Template(qsub + ' -hold_jid compute_gene_stats_$case* -o $logsdir -e $logsdir -A clinical-services -N grab_genes_stats_$case\_'+genelist+'\_$quality """\"$grab_genes_stats_script $exon_stats_file $genelist_file $outfile $outfile_unmatched\""""')
             command_string = templ.substitute(args_dict)	
             command = shlex.split(command_string)
             subprocess.check_call(command)
@@ -60,7 +61,7 @@ def query_stats(args_dict):
         for quality in qualities:
             args_dict['quality'] = quality
             args_dict['infile'] = args_dict['output_dir'] + '/' + genelist + '_exon_stats_' + quality + '.txt'
-            templ = Template(qsub + ' -hold_jid grab_genes_stats_$case* -A clinical-services -N query_stats_$case\_'+genelist+'\_$quality """\"$query_stats_script $infile $quality\""""')
+            templ = Template(qsub + ' -hold_jid grab_genes_stats_$case* -o $logsdir -e $logsdir -A clinical-services -N query_stats_$case\_'+genelist+'\_$quality """\"$query_stats_script $infile $quality\""""')
             command_string = templ.substitute(args_dict)	
             command = shlex.split(command_string)
             subprocess.check_call(command)
@@ -71,7 +72,7 @@ def collect_stats(args_dict):
     for genelist in genelists:
         args_dict['csqualities'] = str(qualities).strip('[]').replace(' ','')
         args_dict['csthresholds'] = thresholds.replace(' ',',')
-        templ = Template(qsub + ' -hold_jid query_stats_$case* -A clinical-services -N collect_stats_$case\_'+genelist+' """\"$collect_stats_script '+genelist+' $csqualities $csthresholds $output_dir\""""')
+        templ = Template(qsub + ' -hold_jid query_stats_$case* -o $logsdir -e $logsdir -A clinical-services -N collect_stats_$case\_'+genelist+' """\"$collect_stats_script '+genelist+' $csqualities $csthresholds $output_dir\""""')
         command_string = templ.substitute(args_dict)	
         command = shlex.split(command_string)
         subprocess.check_call(command)
@@ -123,6 +124,7 @@ if __name__ == "__main__":
     parser.add_argument('-qs', '--qsub', dest='qsub', type=str, default=default_qsub, help='full path to qsub executable, absolute')
     parser.add_argument('--case', dest = 'case', type=str, help='name of case subdirectory (for example, case0017)')
     parser.add_argument('--fullqcdir', dest='fullqcdir', type=str, help='Full path to QC directory. If provided, overrides basepath, medgapdir, qcdir, and case.')
+    parser.add_argument('-l', '--logsdir', dest='logsdir', type=str, default=default_logsdir, help='Path to logs directory.')
 
     args = parser.parse_args()
     args_dict = vars(args)
@@ -153,9 +155,12 @@ if __name__ == "__main__":
     args_dict['output_dir'] = os.path.join(args_dict['coverage_dir'],'coverage_stats-'+str(current_version))
     args_dict['qsub'] = args.qsub
 
-    # Create output dir if it's not there already
+    # Create output and log dirs if they're not there already
     if not os.path.isdir(args_dict['output_dir']):
         os.makedirs(args_dict['output_dir'], exist_ok=True)
+
+    if not os.path.isdir(args_dict['logsdir']):
+        os.makedirs(args_dict['logsdir'], exist_ok=True)
 
     add_gene_names(args_dict)
     compute_gene_stats(args_dict)

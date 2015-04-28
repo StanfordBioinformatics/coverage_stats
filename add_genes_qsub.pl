@@ -14,6 +14,7 @@ my $mem = shift;
 my $MDIR = shift;
 my $TOOLSDIR = shift;
 my $OUTDIR = shift;
+my $LOGSDIR = shift;
 
 print "$sample\n";
 print "$pipeline\n";
@@ -23,17 +24,17 @@ my $command;
 my $chr;
 for (my $i=1; $i<=22; $i++){
 	$chr = "chr$i";
-	$command = "qsub \-b y \-N coverage_add_$TYPE\_$sample\_$chr -A clinical-services -l h_vmem=$mem \"$TOOLSDIR/add_exonname_coverage.pl $MDIR $TYPE\_coverage_hist_$Q.txt $BED $OUTDIR $TYPE\_coverage_hist_$Q\_withgenes_$chr.txt $chr $thr1 $thr2 $thr3 $thr4\"";
+	$command = "env qsub \-b y \-N coverage_add_$TYPE\_$sample\_$chr -A clinical-services -o $LOGSDIR -e $LOGSDIR -l h_vmem=$mem \"$TOOLSDIR/add_exonname_coverage.pl $MDIR $TYPE\_coverage_hist_$Q.txt $BED $OUTDIR $TYPE\_coverage_hist_$Q\_withgenes_$chr.txt $chr $thr1 $thr2 $thr3 $thr4\"";
 	#print "$command\n";
 	system($command);
 }
 $chr = "chrX";
-$command = "qsub \-b y \-N coverage_add_$TYPE\_$sample\_$chr -A clinical-services -l h_vmem=$mem \"$TOOLSDIR/add_exonname_coverage.pl $MDIR $TYPE\_coverage_hist_$Q.txt $BED $OUTDIR $TYPE\_coverage_hist_$Q\_withgenes_$chr.txt $chr $thr1 $thr2 $thr3 $thr4\"";
+$command = "env qsub \-b y \-N coverage_add_$TYPE\_$sample\_$chr -A clinical-services -o $LOGSDIR -e $LOGSDIR -l h_vmem=$mem \"$TOOLSDIR/add_exonname_coverage.pl $MDIR $TYPE\_coverage_hist_$Q.txt $BED $OUTDIR $TYPE\_coverage_hist_$Q\_withgenes_$chr.txt $chr $thr1 $thr2 $thr3 $thr4\"";
 #print "$command\n";
 system($command);
 
 $chr = "chrY";
-$command = "qsub \-b y \-N coverage_add_$TYPE\_$sample\_$chr -A clinical-services -l h_vmem=$mem \"$TOOLSDIR/add_exonname_coverage.pl $MDIR $TYPE\_coverage_hist_$Q.txt $BED $OUTDIR $TYPE\_coverage_hist_$Q\_withgenes_$chr.txt $chr $thr1 $thr2 $thr3 $thr4\"";
+$command = "env qsub \-b y \-N coverage_add_$TYPE\_$sample\_$chr -A clinical-services -o $LOGSDIR -e $LOGSDIR -l h_vmem=$mem \"$TOOLSDIR/add_exonname_coverage.pl $MDIR $TYPE\_coverage_hist_$Q.txt $BED $OUTDIR $TYPE\_coverage_hist_$Q\_withgenes_$chr.txt $chr $thr1 $thr2 $thr3 $thr4\"";
 #print "$command\n";
 system($command);
 
