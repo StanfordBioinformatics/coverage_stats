@@ -6,7 +6,7 @@ import subprocess
 import highest_version
 import os.path
 
-current_version = '0.4'
+current_version = '0.5'
 default_basepath = '/srv/gsfs0/SCGS' 
 default_toolsdir = 'pipeline/coverage_stats/' + current_version
 default_dbasesdir = default_toolsdir + '/dbases/'
