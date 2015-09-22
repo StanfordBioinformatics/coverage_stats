@@ -123,29 +123,28 @@ if __name__ == "__main__":
     parser.add_argument('-t', '--toolsdir', dest='toolsdir', type=str, default=default_toolsdir, help='tools subdirectory, relative to basepath')
     parser.add_argument('-qs', '--qsub', dest='qsub', type=str, default=default_qsub, help='full path to qsub executable, absolute')
     parser.add_argument('--case', dest = 'case', type=str, help='name of case subdirectory (for example, case0017)')
-    parser.add_argument('--fullqcdir', dest='fullqcdir', type=str, help='Full path to QC directory. If provided, overrides basepath, medgapdir, qcdir, and case.')
+    parser.add_argument('--fullqcdir', dest='fullqcdir', type=str, help='Full path to QC directory. If provided, overrides medgapdir, qcdir, and case.')
     parser.add_argument('-l', '--logsdir', dest='logsdir', type=str, default=default_logsdir, help='Path to logs directory.')
 
     args = parser.parse_args()
     args_dict = vars(args)
 
     if args.fullqcdir != None:
-        # Calculate other paths from full path
-        rest, args_dict['qcdir'] = os.path.split(args.fullqcdir)
+        # Calculate qcdir, medgapdir, and case from full path
+        realfullqcdir = os.path.realpath(args.fullqcdir)
+        rest, args_dict['qcdir'] = os.path.split(realfullqcdir)
         rest, args_dict['medgapdir'] = os.path.split(rest)
         rest, args_dict['case'] = os.path.split(rest)
-        rest, cases = os.path.split(rest)
-        assert cases == 'cases'
-        args_dict['basepath'] = rest
+        args_dict['coverage_dir'] = os.path.join(realfullqcdir, 'coverage')
     else:
         assert args.case != None
         if args.medgapdir == 'latest':
             args_dict['medgapdir'] = os.path.basename(highest_version.highest_version(args_dict['basepath'] + '/cases/' + args_dict['case']+ '/medgap'))
         if args.qcdir == 'latest':
             args_dict['qcdir'] = os.path.basename(highest_version.highest_version(args_dict['basepath'] + '/cases/' + args_dict['case'] + '/' + args_dict['medgapdir'] + '/QC'))
+        args_dict['coverage_dir'] = args_dict['basepath'] + '/cases/' + args_dict['case'] + '/' + args_dict['medgapdir'] + '/' + args_dict['qcdir'] + '/coverage'
 
     args_dict['thresholds'] = thresholds
-    args_dict['coverage_dir'] = args_dict['basepath'] + '/cases/' + args_dict['case'] + '/' + args_dict['medgapdir'] + '/' + args_dict['qcdir'] + '/coverage'
     args_dict['exons_bedfile'] = args_dict['basepath'] + '/' + args.dbasesdir + '/refseq_exons.bed' 
     args_dict['add_genes_script'] = args_dict['basepath'] + '/' + args.toolsdir + '/add_genes_qsub.pl'
     args_dict['compute_gene_stats_script'] = args_dict['basepath'] + '/' + args.toolsdir + '/compute_gene_stats.pl'
